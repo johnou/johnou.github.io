@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>Ruffle</title>
+  </head>
+  <body>
+    <div id="container"/>
+  <script src="https://just.johno.it/lupolepre/ruffle.js"></script>
+  <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.addEventListener("load", (event) => {
+        const ruffle = window.RufflePlayer.newest();
+        const player = ruffle.createPlayer();
+        const container = document.getElementById("container");
+        container.appendChild(player);
+        player.load("https://just.johno.it/lupolepre/LupoELepre.swf");
+    });
+  </script>
+  </body>
+</html>
