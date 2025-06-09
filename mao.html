@@ -8,18 +8,48 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-KxQ4ckEYi4eKjF9EYoxm1a/vG1gJQvR6qE4PO1c8mOvqj1Lzr9zXj+lWTZL6G+zPCrS74u+nps3Dgf7zzWGF8w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     html, body {
+      margin: 0;
       height: 100%;
-      font-family: 'Playfair Display', serif;
       background: radial-gradient(circle at top, #4a2c3a, #1e0e1c);
       overflow: hidden;
+      font-family: 'Playfair Display', serif;
       color: #fbdada;
     }
+
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .stars::before, .stars::after {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background-image:
+        radial-gradient(#fff7 1px, transparent 1px),
+        radial-gradient(#fff4 1px, transparent 1px),
+        radial-gradient(#ffd4ec88 1px, transparent 1px);
+      background-size: 40px 40px, 70px 70px, 100px 100px;
+      background-position: 0 0, 20px 30px, 50px 70px;
+      animation: twinkle 4s linear infinite;
+    }
+
+    .stars::after {
+      animation-delay: 2s;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.8; transform: translateY(0); }
+      50% { opacity: 0.4; transform: translateY(-1px); }
+    }
+
     .content {
       position: relative;
       z-index: 2;
@@ -31,63 +61,41 @@
       text-align: center;
       padding: 2rem;
     }
+
     .logo {
       width: 180px;
       border-radius: 50%;
       box-shadow: 0 0 25px #fbdada80;
       margin-bottom: 2rem;
     }
+
     h1 {
       font-size: 3rem;
       margin-bottom: 0.5rem;
     }
+
     h2 {
       font-size: 2rem;
       margin-bottom: 1.5rem;
     }
+
     .description {
       font-size: 1.1rem;
       max-width: 600px;
       margin-bottom: 4rem;
       line-height: 1.6;
     }
+
     .socials a {
       font-size: 3.5rem;
       margin: 0 2rem;
       color: #fbdada;
       transition: transform 0.3s ease, color 0.3s ease;
     }
+
     .socials a:hover {
       transform: scale(1.3);
       color: #ffd4ec;
-    }
-    .stars {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      z-index: 1;
-    }
-    .stars::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-image:
-        radial-gradient(#fff7 1px, transparent 1px),
-        radial-gradient(#fff5 1px, transparent 1px),
-        radial-gradient(#fff4 1px, transparent 1px);
-      background-size: 40px 40px, 60px 60px, 90px 90px;
-      background-position: 0 0, 20px 30px, 50px 70px;
-      animation: moveStars 60s linear infinite;
-    }
-    @keyframes moveStars {
-      0% {
-        background-position: 0 0, 20px 30px, 50px 70px;
-      }
-      100% {
-        background-position: -1000px -1000px, -1200px -800px, -800px -500px;
-      }
     }
   </style>
 </head>
@@ -102,7 +110,7 @@
     </p>
     <div class="socials">
       <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-facebook"></i></a>
       <a href="#"><i class="fab fa-instagram"></i></a>
     </div>
   </div>
