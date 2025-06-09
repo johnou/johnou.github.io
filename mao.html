@@ -6,12 +6,12 @@
   <title>Mao Comics Pordenone</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-KxQ4ckEYi4eKjF9EYoxm1a/vG1gJQvR6qE4PO1c8mOvqj1Lzr9zXj+lWTZL6G+zPCrS74u+nps3Dgf7zzWGF8w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     html, body {
       margin: 0;
       height: 100%;
-      background: radial-gradient(circle at top, #4a2c3a, #1e0e1c);
+      background: radial-gradient(ellipse at bottom right, #502637, #1e0e1c 70%);
       overflow: hidden;
       font-family: 'Playfair Display', serif;
       color: #fbdada;
@@ -25,29 +25,31 @@
       pointer-events: none;
     }
 
-    .stars::before, .stars::after {
-      content: '';
+    .star {
       position: absolute;
-      width: 200%;
-      height: 200%;
-      top: -50%;
-      left: -50%;
-      background-image:
-        radial-gradient(#fff7 1px, transparent 1px),
-        radial-gradient(#fff4 1px, transparent 1px),
-        radial-gradient(#ffd4ec88 1px, transparent 1px);
-      background-size: 40px 40px, 70px 70px, 100px 100px;
-      background-position: 0 0, 20px 30px, 50px 70px;
-      animation: twinkle 4s linear infinite;
+      background-color: #ffd26a;
+      opacity: 0.85;
+      animation: twinkle 4s ease-in-out infinite;
     }
 
-    .stars::after {
-      animation-delay: 2s;
+    .star.diamond {
+      width: 8px;
+      height: 8px;
+      transform: rotate(45deg);
+      border-radius: 10%; /* Sharper diamond shape */
+      box-shadow: 0 0 6px #ffe6a080;
+    }
+
+    .star.dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      box-shadow: 0 0 4px #ffe6a055;
     }
 
     @keyframes twinkle {
-      0%, 100% { opacity: 0.8; transform: translateY(0); }
-      50% { opacity: 0.4; transform: translateY(-1px); }
+      0%, 100% { transform: scale(1) rotate(45deg); opacity: 0.7; }
+      50% { transform: scale(1.6) rotate(45deg); opacity: 1; }
     }
 
     .content {
@@ -74,10 +76,13 @@
       margin-bottom: 0.5rem;
     }
 
-    h2 {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-    }
+	.subtitle {
+	  font-size: 1rem;
+	  margin-top: 0.3rem;
+	  margin-bottom: 2rem;
+	  color: #ffd4ec;
+	  opacity: 0.8;
+	}
 
     .description {
       font-size: 1.1rem;
@@ -100,11 +105,55 @@
   </style>
 </head>
 <body>
-  <div class="stars"></div>
+  <!-- Starfield -->
+  <div class="stars">
+    <!-- Row 1 -->
+    <div class="star diamond" style="top:5%; left:5%; animation-delay: 0s;"></div>
+    <div class="star dot" style="top:5%; left:15%; animation-delay: 0.3s;"></div>
+    <div class="star diamond" style="top:5%; left:30%; animation-delay: 0.6s;"></div>
+    <div class="star dot" style="top:5%; left:45%; animation-delay: 0.9s;"></div>
+    <div class="star diamond" style="top:5%; left:60%; animation-delay: 1.2s;"></div>
+    <div class="star dot" style="top:5%; left:75%; animation-delay: 1.5s;"></div>
+    <div class="star diamond" style="top:5%; left:90%; animation-delay: 1.8s;"></div>
+
+    <!-- Row 2 -->
+    <div class="star dot" style="top:20%; left:10%; animation-delay: 0.4s;"></div>
+    <div class="star diamond" style="top:20%; left:25%; animation-delay: 0.7s;"></div>
+    <div class="star dot" style="top:20%; left:40%; animation-delay: 1s;"></div>
+    <div class="star diamond" style="top:20%; left:55%; animation-delay: 1.3s;"></div>
+    <div class="star dot" style="top:20%; left:70%; animation-delay: 1.6s;"></div>
+    <div class="star diamond" style="top:20%; left:85%; animation-delay: 1.9s;"></div>
+
+    <!-- Row 3 -->
+    <div class="star diamond" style="top:40%; left:5%; animation-delay: 0.5s;"></div>
+    <div class="star dot" style="top:40%; left:20%; animation-delay: 0.8s;"></div>
+    <div class="star diamond" style="top:40%; left:35%; animation-delay: 1.1s;"></div>
+    <div class="star dot" style="top:40%; left:50%; animation-delay: 1.4s;"></div>
+    <div class="star diamond" style="top:40%; left:65%; animation-delay: 1.7s;"></div>
+    <div class="star dot" style="top:40%; left:80%; animation-delay: 2s;"></div>
+
+    <!-- Row 4 -->
+    <div class="star dot" style="top:60%; left:10%; animation-delay: 0.3s;"></div>
+    <div class="star diamond" style="top:60%; left:25%; animation-delay: 0.6s;"></div>
+    <div class="star dot" style="top:60%; left:40%; animation-delay: 0.9s;"></div>
+    <div class="star diamond" style="top:60%; left:55%; animation-delay: 1.2s;"></div>
+    <div class="star dot" style="top:60%; left:70%; animation-delay: 1.5s;"></div>
+    <div class="star diamond" style="top:60%; left:85%; animation-delay: 1.8s;"></div>
+
+    <!-- Row 5 -->
+    <div class="star diamond" style="top:80%; left:5%; animation-delay: 0.4s;"></div>
+    <div class="star dot" style="top:80%; left:20%; animation-delay: 0.7s;"></div>
+    <div class="star diamond" style="top:80%; left:35%; animation-delay: 1s;"></div>
+    <div class="star dot" style="top:80%; left:50%; animation-delay: 1.3s;"></div>
+    <div class="star diamond" style="top:80%; left:65%; animation-delay: 1.6s;"></div>
+    <div class="star dot" style="top:80%; left:80%; animation-delay: 1.9s;"></div>
+  </div>
+
+  <!-- Content -->
   <div class="content">
     <img src="assets/logo.png" alt="Mao Comics Logo" class="logo" />
     <h1>Mao Comics</h1>
-    <h2>Pordenone</h2>
+    <div class="subtitle">Pordenone</div>
     <p class="description">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </p>
