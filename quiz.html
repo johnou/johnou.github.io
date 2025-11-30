@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capitali Europee - Allenati e Testati</title>
+  <style>
+    :root {
+      --bg-1: #0f1021;
+      --bg-2: #182b64;
+      --bg-3: #1b998b;
+      --accent-1: #ff7ee2;
+      --accent-2: #6ef6ff;
+      --accent-3: #ffc857;
+      --card: rgba(255, 255, 255, 0.08);
+      --glass: rgba(255, 255, 255, 0.18);
+      --text: #eef6ff;
+      --muted: #c8d2ff;
+      --shadow: 0 15px 60px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS","Futura","Avenir Next","Segoe UI",sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 15% 20%, rgba(255, 126, 226, 0.18), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(110, 246, 255, 0.22), transparent 32%),
+                  linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      overflow-x: hidden;
+    }
+
+    #fireworks {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      mix-blend-mode: screen;
+    }
+
+    .halo {
+      position: fixed;
+      inset: 0;
+      background: conic-gradient(from 120deg, rgba(255, 126, 226, 0.1), rgba(110, 246, 255, 0.16), rgba(255, 200, 87, 0.12), rgba(255, 126, 226, 0.1));
+      filter: blur(120px);
+      z-index: 0;
+      pointer-events: none;
+      animation: spin 28s linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 120px 120px;
+      mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.8), transparent 65%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 18px 64px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .title-block {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: linear-gradient(120deg, rgba(255, 126, 226, 0.2), rgba(110, 246, 255, 0.2));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: 1px;
+      text-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 10px;
+      padding: 6px;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .mode-btn {
+      border: none;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(120deg, rgba(255, 126, 226, 0.3), rgba(110, 246, 255, 0.25));
+      color: var(--text);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .panels {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 126, 226, 0.12), rgba(110, 246, 255, 0.08));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .card:hover::after { opacity: 1; }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 18px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--accent-2);
+    }
+
+    .headline {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+      margin: 0 0 12px;
+      line-height: 1.6;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .flashcard {
+      margin-top: 14px;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(145deg, rgba(15,16,33,0.75), rgba(24,43,100,0.65));
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flashcard h3 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.6px;
+    }
+
+    .label {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(110, 246, 255, 0.16);
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .answer {
+      margin-top: 16px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent-3);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .answer.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      color: var(--bg-1);
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+    }
+
+    button.secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .progress {
+      margin-top: 16px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(120deg, var(--accent-2), var(--accent-1));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .stat {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .stat strong { display: block; font-size: 20px; color: var(--accent-2); }
+
+    .test-card {
+      margin-top: 10px;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: linear-gradient(160deg, rgba(24,43,100,0.7), rgba(15,16,33,0.8));
+      box-shadow: var(--shadow);
+    }
+
+    .question {
+      font-size: 20px;
+      margin: 0 0 12px;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .option {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      transition: transform 0.15s ease, border 0.15s ease, background 0.2s ease;
+      text-align: center;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .option:hover { transform: translateY(-1px); border-color: var(--accent-2); }
+    .option.selected { background: rgba(110, 246, 255, 0.18); border-color: var(--accent-2); }
+    .option.correct { background: rgba(110, 246, 255, 0.25); border-color: var(--accent-2); }
+    .option.wrong { background: rgba(255, 126, 126, 0.2); border-color: #ff7e7e; }
+
+    .test-footer {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill.small {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+
+    .result {
+      margin-top: 10px;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: linear-gradient(150deg, rgba(110, 246, 255, 0.16), rgba(255, 126, 226, 0.16));
+      box-shadow: var(--shadow);
+    }
+
+    .result h3 { margin: 0 0 6px; }
+    .result .grade {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--accent-3);
+      letter-spacing: 1px;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 900px) {
+      .panels { grid-template-columns: 1fr; }
+      .options { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .mode-switch { width: 100%; }
+      .mode-btn { flex: 1; text-align: center; }
+      h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="halo"></div>
+  <div class="grid"></div>
+  <div class="wrapper">
+    <header>
+      <div class="title-block">
+        <div class="badge">Capitali Europee</div>
+        <h1>Allenati, memorizza e metti alla prova i tuoi riflessi</h1>
+      </div>
+      <div class="mode-switch">
+        <button class="mode-btn active" data-mode="practice">Modalit&agrave; pratica</button>
+        <button class="mode-btn" data-mode="test">Modalit&agrave; test</button>
+      </div>
+    </header>
+
+    <div class="panels">
+      <div class="card" id="practice-panel">
+        <div class="section-title">Flashcard</div>
+        <h2 class="headline">Ripasso rapido con carte dinamiche</h2>
+        <p class="muted">Mostra la capitale, segna le carte gi&agrave; memorizzate e scivola tra gli stati europei senza distrazioni.</p>
+        <div class="pill-row">
+          <div class="pill">Allenamento mirato</div>
+          <div class="pill">Progressi in tempo reale</div>
+          <div class="pill">Mescolamento smart</div>
+        </div>
+
+        <div class="flashcard">
+          <div class="label">Stato</div>
+          <h3 id="practice-country"></h3>
+          <div class="answer" id="practice-capital"></div>
+        </div>
+
+        <div class="actions">
+          <button id="show-answer">Mostra capitale</button>
+          <button class="secondary" id="next-card">Salta / Avanti</button>
+          <button class="secondary" id="mark-card">Segna come memorizzato</button>
+        </div>
+
+        <div class="progress" aria-label="Progresso ripasso">
+          <span id="practice-progress"></span>
+        </div>
+        <div class="stats">
+          <div class="stat">Carta <strong id="practice-counter">0/0</strong></div>
+          <div class="stat">Memorizzate <strong id="practice-mastered">0</strong></div>
+          <div class="stat">Da rivedere <strong id="practice-left">0</strong></div>
+        </div>
+      </div>
+
+      <div class="card" id="test-panel">
+        <div class="section-title">Quiz Turbo</div>
+        <h2 class="headline">Sfida lampo con punteggio e voto finale</h2>
+        <p class="muted">Digita la capitale corretta, accumula punti e ottieni un voto brillante alla fine del percorso.</p>
+        <div class="pill-row">
+          <div class="pill">Digitazione attiva</div>
+          <div class="pill">Autocomplete / Hard</div>
+          <div class="pill">Voto finale</div>
+        </div>
+
+        <div class="test-card">
+          <div class="pill small" id="question-indicator">Domanda 1/1</div>
+          <p class="question" id="test-question">Sei pronto?</p>
+          <div class="pill-row" style="margin-bottom:10px;">
+            <div class="pill small">Difficolt&agrave;</div>
+            <button class="mode-btn active" id="easy-mode" style="padding:8px 10px;" data-difficulty="easy">Facile (autocomplete)</button>
+            <button class="mode-btn" id="hard-mode" style="padding:8px 10px;" data-difficulty="hard">Difficile (digitazione pura)</button>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
+            <input id="answer-input" type="text" placeholder="Scrivi la capitale..." style="flex:1; min-width:200px; padding:12px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); background:rgba(0,0,0,0.25); color:var(--text); font-size:16px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);">
+            <datalist id="capital-list"></datalist>
+          </div>
+          <div class="test-footer">
+            <button id="submit-answer">Conferma</button>
+            <button class="secondary" id="restart-test">Nuovo test</button>
+            <div class="pill small" id="score-indicator">Punteggio 0</div>
+          </div>
+          <div class="progress">
+            <span id="test-progress"></span>
+          </div>
+        </div>
+
+        <div class="result hidden" id="result-box">
+          <h3>Risultato finale</h3>
+          <div class="grade" id="grade-text">--</div>
+          <p class="muted" id="grade-detail"></p>
+          <div class="stats">
+            <div class="stat">Corrette <strong id="correct-count">0</strong></div>
+            <div class="stat">Errate <strong id="wrong-count">0</strong></div>
+            <div class="stat">Precisione <strong id="accuracy">0%</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    const capitals = [
+      { paese: "Italia", capitale: "Roma" },
+      { paese: "Francia", capitale: "Parigi" },
+      { paese: "Germania", capitale: "Berlino" },
+      { paese: "Spagna", capitale: "Madrid" },
+      { paese: "Portogallo", capitale: "Lisbona" },
+      { paese: "Regno Unito", capitale: "Londra" },
+      { paese: "Irlanda", capitale: "Dublino" },
+      { paese: "Svizzera", capitale: "Berna" },
+      { paese: "Austria", capitale: "Vienna" },
+      { paese: "Belgio", capitale: "Bruxelles" },
+      { paese: "Paesi Bassi", capitale: "Amsterdam" },
+      { paese: "Norvegia", capitale: "Oslo" },
+      { paese: "Svezia", capitale: "Stoccolma" },
+      { paese: "Finlandia", capitale: "Helsinki" },
+      { paese: "Danimarca", capitale: "Copenaghen" },
+      { paese: "Polonia", capitale: "Varsavia" },
+      { paese: "Repubblica Ceca", capitale: "Praga" },
+      { paese: "Ungheria", capitale: "Budapest" },
+      { paese: "Grecia", capitale: "Atene" },
+      { paese: "Turchia", capitale: "Ankara" },
+      { paese: "Croazia", capitale: "Zagabria" },
+      { paese: "Serbia", capitale: "Belgrado" },
+      { paese: "Slovacchia", capitale: "Bratislava" },
+      { paese: "Slovenia", capitale: "Lubiana" },
+      { paese: "Bulgaria", capitale: "Sofia" },
+      { paese: "Romania", capitale: "Bucarest" },
+      { paese: "Ucraina", capitale: "Kiev" },
+      { paese: "Russia", capitale: "Mosca" },
+      { paese: "Lettonia", capitale: "Riga" },
+      { paese: "Lituania", capitale: "Vilnius" },
+      { paese: "Estonia", capitale: "Tallinn" },
+      { paese: "Islanda", capitale: "Reykjavik" },
+      { paese: "Cipro", capitale: "Nicosia" },
+      { paese: "Malta", capitale: "La Valletta" },
+      { paese: "Lussemburgo", capitale: "Lussemburgo" },
+      { paese: "Bosnia ed Erzegovina", capitale: "Sarajevo" },
+      { paese: "Macedonia del Nord", capitale: "Skopje" },
+      { paese: "Albania", capitale: "Tirana" },
+      { paese: "Montenegro", capitale: "Podgorica" },
+      { paese: "Moldavia", capitale: "Chisinau" }
+    ];
+
+    const shuffle = arr => arr.map(a => [Math.random(), a]).sort((a, b) => a[0] - b[0]).map(a => a[1]);
+
+    // Stato pratica
+    let practiceCards = shuffle([...capitals]);
+    let practiceIndex = 0;
+    let mastered = new Set();
+
+    const practiceCountry = document.getElementById("practice-country");
+    const practiceCapital = document.getElementById("practice-capital");
+    const practiceProgress = document.getElementById("practice-progress");
+    const practiceCounter = document.getElementById("practice-counter");
+    const practiceMastered = document.getElementById("practice-mastered");
+    const practiceLeft = document.getElementById("practice-left");
+
+    function updatePracticeCard() {
+      if (practiceCards.length === 0) {
+        practiceCards = shuffle([...capitals]);
+        practiceIndex = 0;
+      }
+      const card = practiceCards[practiceIndex];
+      practiceCountry.textContent = card.paese;
+      practiceCapital.textContent = card.capitale;
+      practiceCapital.classList.remove("visible");
+      practiceCounter.textContent = (practiceIndex + 1) + "/" + practiceCards.length;
+      practiceMastered.textContent = mastered.size;
+      practiceLeft.textContent = capitals.length - mastered.size;
+      const progressValue = Math.round((mastered.size / capitals.length) * 100);
+      practiceProgress.style.width = progressValue + "%";
+    }
+
+    document.getElementById("show-answer").addEventListener("click", () => {
+      practiceCapital.classList.toggle("visible");
+    });
+
+    document.getElementById("next-card").addEventListener("click", () => {
+      practiceIndex = (practiceIndex + 1) % practiceCards.length;
+      updatePracticeCard();
+    });
+
+    document.getElementById("mark-card").addEventListener("click", () => {
+      mastered.add(practiceCards[practiceIndex].paese);
+      practiceIndex = (practiceIndex + 1) % practiceCards.length;
+      updatePracticeCard();
+    });
+
+    // Stato test
+    let questions = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOption = null;
+    let difficulty = "easy";
+
+    const questionIndicator = document.getElementById("question-indicator");
+    const testQuestion = document.getElementById("test-question");
+    const scoreIndicator = document.getElementById("score-indicator");
+    const testProgress = document.getElementById("test-progress");
+    const resultBox = document.getElementById("result-box");
+    const gradeText = document.getElementById("grade-text");
+    const gradeDetail = document.getElementById("grade-detail");
+    const correctCount = document.getElementById("correct-count");
+    const wrongCount = document.getElementById("wrong-count");
+    const accuracy = document.getElementById("accuracy");
+    const answerInput = document.getElementById("answer-input");
+    const capitalList = document.getElementById("capital-list");
+    const easyBtn = document.getElementById("easy-mode");
+    const hardBtn = document.getElementById("hard-mode");
+    const fireworksCanvas = document.getElementById("fireworks");
+    const fwCtx = fireworksCanvas.getContext("2d");
+
+    function resizeFireworks() {
+      fireworksCanvas.width = window.innerWidth;
+      fireworksCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeFireworks);
+    resizeFireworks();
+
+    let fireworksRunning = false;
+    let particles = [];
+    let fireworkTimer;
+
+    function spawnFirework() {
+      const colors = ["#ff7ee2", "#6ef6ff", "#ffc857", "#7cf29c"];
+      const x = Math.random() * fireworksCanvas.width * 0.8 + fireworksCanvas.width * 0.1;
+      const y = Math.random() * fireworksCanvas.height * 0.5 + fireworksCanvas.height * 0.1;
+      const count = 40 + Math.floor(Math.random() * 20);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count;
+        const speed = Math.random() * 3 + 2;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 60 + Math.random() * 20,
+          color
+        });
+      }
+    }
+
+    function drawFireworks() {
+      if (!fireworksRunning) return;
+      fwCtx.globalCompositeOperation = "source-over";
+      fwCtx.fillStyle = "rgba(0, 0, 0, 0.15)";
+      fwCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+      fwCtx.globalCompositeOperation = "lighter";
+
+      particles = particles.filter(p => p.life > 0);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.02;
+        p.life -= 1;
+        const alpha = Math.max(p.life / 80, 0);
+        fwCtx.beginPath();
+        fwCtx.fillStyle = p.color + Math.floor(alpha * 255).toString(16).padStart(2, "0");
+        fwCtx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+        fwCtx.fill();
+      });
+
+      requestAnimationFrame(drawFireworks);
+    }
+
+    function startFireworks() {
+      if (fireworksRunning) return;
+      fireworksRunning = true;
+      particles = [];
+      fwCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+      spawnFirework();
+      fireworkTimer = setInterval(spawnFirework, 500);
+      drawFireworks();
+      setTimeout(stopFireworks, 4500);
+    }
+
+    function stopFireworks() {
+      fireworksRunning = false;
+      clearInterval(fireworkTimer);
+      particles = [];
+      fwCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+    }
+
+    function buildQuestions() {
+      questions = shuffle([...capitals]);
+      currentQuestion = 0;
+      score = 0;
+      selectedOption = null;
+      resultBox.classList.add("hidden");
+      stopFireworks();
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQuestion];
+      questionIndicator.textContent = "Domanda " + (currentQuestion + 1) + "/" + questions.length;
+      testQuestion.textContent = "Qual &egrave; la capitale di " + q.paese + "?";
+      answerInput.value = "";
+      answerInput.focus();
+      selectedOption = null;
+      if (difficulty === "easy") {
+        answerInput.setAttribute("list", "capital-list");
+        answerInput.placeholder = "Scrivi o scegli la capitale...";
+      } else {
+        answerInput.removeAttribute("list");
+        answerInput.placeholder = "Scrivi la capitale (senza aiuti)...";
+      }
+      scoreIndicator.textContent = "Punteggio " + score + "/" + (questions.length * 10);
+      const progressValue = Math.round((currentQuestion / questions.length) * 100);
+      testProgress.style.width = progressValue + "%";
+    }
+
+    function submitAnswer() {
+      const q = questions[currentQuestion];
+      const given = answerInput.value.trim();
+      if (!given) return;
+      if (given.toLowerCase() === q.capitale.toLowerCase()) {
+        score += 10;
+      }
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion >= questions.length) {
+          finishTest();
+        } else {
+          renderQuestion();
+        }
+      }, 700);
+    }
+
+    function finishTest() {
+      const correct = Math.round(score / 10);
+      const total = questions.length;
+      const wrong = total - correct;
+      const acc = Math.round((correct / total) * 100);
+      let grade = "C";
+      if (acc >= 90) grade = "A";
+      else if (acc >= 80) grade = "B";
+      else if (acc >= 70) grade = "C";
+      else if (acc >= 60) grade = "D";
+      else grade = "E";
+
+      gradeText.textContent = "Voto " + grade + " (" + acc + "%)";
+      gradeDetail.textContent = acc >= 80 ? "Prestazione luminosa! Continua cos&igrave;." :
+                               acc >= 60 ? "Buono, ma c'&egrave; margine per brillare." :
+                               "Ripassa qualche carta e riprova: crescerai in fretta.";
+      correctCount.textContent = correct;
+      wrongCount.textContent = wrong;
+      accuracy.textContent = acc + "%";
+      resultBox.classList.remove("hidden");
+      testProgress.style.width = "100%";
+      scoreIndicator.textContent = "Punteggio " + score;
+      if (acc === 100) startFireworks();
+    }
+
+    document.getElementById("submit-answer").addEventListener("click", submitAnswer);
+    document.getElementById("restart-test").addEventListener("click", buildQuestions);
+    answerInput.addEventListener("keydown", (e) => { if (e.key === "Enter") submitAnswer(); });
+
+    capitalList.innerHTML = capitals.map(c => `<option value="${c.capitale}"></option>`).join("");
+
+    function setDifficulty(mode) {
+      difficulty = mode;
+      easyBtn.classList.toggle("active", mode === "easy");
+      hardBtn.classList.toggle("active", mode === "hard");
+      renderQuestion();
+    }
+
+    easyBtn.addEventListener("click", () => setDifficulty("easy"));
+    hardBtn.addEventListener("click", () => setDifficulty("hard"));
+
+    // Switch modalita
+    const practicePanel = document.getElementById("practice-panel");
+    const testPanel = document.getElementById("test-panel");
+    document.querySelectorAll(".mode-switch .mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".mode-switch .mode-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const mode = btn.dataset.mode;
+        practicePanel.style.display = mode === "practice" ? "block" : "none";
+        testPanel.style.display = mode === "test" ? "block" : "none";
+      });
+    });
+
+    practicePanel.style.display = "block";
+    testPanel.style.display = "none";
+
+    // Avvio
+    updatePracticeCard();
+    buildQuestions();
+  </script>
+</body>
+</html>
