@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -409,8 +410,8 @@
         <h1>Allenati, memorizza e metti alla prova i tuoi riflessi</h1>
       </div>
       <div class="mode-switch">
-        <button class="mode-btn active" data-mode="practice">Modalit&agrave; pratica</button>
-        <button class="mode-btn" data-mode="test">Modalit&agrave; test</button>
+        <button class="mode-btn active" data-mode="practice">Modalità pratica</button>
+        <button class="mode-btn" data-mode="test">Modalità test</button>
       </div>
     </header>
 
@@ -418,7 +419,7 @@
       <div class="card" id="practice-panel">
         <div class="section-title">Flashcard</div>
         <h2 class="headline">Ripasso rapido con carte dinamiche</h2>
-        <p class="muted">Mostra la capitale, segna le carte gi&agrave; memorizzate e scivola tra gli stati europei senza distrazioni.</p>
+        <p class="muted">Mostra la capitale, segna le carte già memorizzate e scivola tra gli stati europei senza distrazioni.</p>
         <div class="pill-row">
           <div class="pill">Allenamento mirato</div>
           <div class="pill">Progressi in tempo reale</div>
@@ -461,7 +462,7 @@
           <div class="pill small" id="question-indicator">Domanda 1/1</div>
           <p class="question" id="test-question">Sei pronto?</p>
           <div class="pill-row" style="margin-bottom:10px;">
-            <div class="pill small">Difficolt&agrave;</div>
+            <div class="pill small">Difficoltà</div>
             <button class="mode-btn active" id="easy-mode" style="padding:8px 10px;" data-difficulty="easy">Facile (autocomplete)</button>
             <button class="mode-btn" id="hard-mode" style="padding:8px 10px;" data-difficulty="hard">Difficile (digitazione pura)</button>
           </div>
@@ -607,6 +608,30 @@
     const hardBtn = document.getElementById("hard-mode");
     const fireworksCanvas = document.getElementById("fireworks");
     const fwCtx = fireworksCanvas.getContext("2d");
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function ensureAudio() {
+      if (!AudioCtx) return null;
+      if (!audioCtx) audioCtx = new AudioCtx();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTone(frequency, duration = 0.16) {
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = frequency;
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    }
 
     function resizeFireworks() {
       fireworksCanvas.width = window.innerWidth;
@@ -692,7 +717,7 @@
     function renderQuestion() {
       const q = questions[currentQuestion];
       questionIndicator.textContent = "Domanda " + (currentQuestion + 1) + "/" + questions.length;
-      testQuestion.textContent = "Qual &egrave; la capitale di " + q.paese + "?";
+      testQuestion.textContent = "Qual è la capitale di " + q.paese + "?";
       answerInput.value = "";
       answerInput.focus();
       selectedOption = null;
@@ -712,8 +737,12 @@
       const q = questions[currentQuestion];
       const given = answerInput.value.trim();
       if (!given) return;
-      if (given.toLowerCase() === q.capitale.toLowerCase()) {
+      const correctHit = given.toLowerCase() === q.capitale.toLowerCase();
+      if (correctHit) {
         score += 10;
+        playTone(880);
+      } else {
+        playTone(180);
       }
       setTimeout(() => {
         currentQuestion++;
@@ -738,8 +767,8 @@
       else grade = "E";
 
       gradeText.textContent = "Voto " + grade + " (" + acc + "%)";
-      gradeDetail.textContent = acc >= 80 ? "Prestazione luminosa! Continua cos&igrave;." :
-                               acc >= 60 ? "Buono, ma c'&egrave; margine per brillare." :
+      gradeDetail.textContent = acc >= 80 ? "Prestazione luminosa! Continua così." :
+                               acc >= 60 ? "Buono, ma c'è margine per brillare." :
                                "Ripassa qualche carta e riprova: crescerai in fretta.";
       correctCount.textContent = correct;
       wrongCount.textContent = wrong;
