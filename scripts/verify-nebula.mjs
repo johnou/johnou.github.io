@@ -42,7 +42,7 @@ function runScene({ reduced = false, workers = true } = {}) {
       addEventListener(name, fn) { events.set(`${id}:${name}`, fn); },
     };
   }
-  const ids = ['nebula', 'sky-controls', 'new-nebula', 'motion-toggle', 'sky-id'];
+  const ids = ['nebula', 'sky-controls', 'new-nebula'];
   const elements = Object.fromEntries(ids.map(id => [id, element(id)]));
   const document = { hidden: false, currentScript: { src: 'http://localhost/assets/js/nebula.js' },
     getElementById: id => elements[id], createElement: () => element('canvas'),
@@ -53,8 +53,9 @@ function runScene({ reduced = false, workers = true } = {}) {
     postMessage(message) { this.request = message; }
     terminate() { this.terminated = true; }
   }
+  const motionPreference = { matches: reduced, addEventListener: (name, fn) => events.set(`media:${name}`, fn) };
   const window = { Worker: workers ? Worker : undefined, innerWidth: 1440, innerHeight: 900, devicePixelRatio: 2,
-    matchMedia: () => ({ matches: reduced, addEventListener: (name, fn) => events.set(`media:${name}`, fn) }),
+    matchMedia: () => motionPreference,
     addEventListener: (name, fn) => events.set(`window:${name}`, fn),
   };
   vm.runInNewContext(mainSource, { document, window, Worker, URL, performance,
@@ -63,7 +64,7 @@ function runScene({ reduced = false, workers = true } = {}) {
     requestAnimationFrame: fn => { frames.set(++nextFrame, fn); return nextFrame; },
     cancelAnimationFrame: id => frames.delete(id),
   });
-  return { elements, events, frames, worker, document, window, draws: () => drawCount };
+  return { elements, events, frames, worker, document, window, motionPreference, draws: () => drawCount };
 }
 const scene = runScene();
 assert.equal(scene.worker.request.width, 1100);
@@ -72,21 +73,23 @@ scene.worker.onmessage({ data: first });
 assert.equal(scene.elements['sky-controls'].hidden, false);
 assert.equal(scene.elements['new-nebula'].disabled, false);
 assert.equal(scene.frames.size, 1);
-scene.events.get('motion-toggle:click')();
+scene.motionPreference.matches = true;
+scene.events.get('media:change')();
 assert.equal(scene.frames.size, 0);
-assert.equal(scene.elements['motion-toggle'].attrs['aria-pressed'], 'true');
 scene.events.get('new-nebula:click')();
 scene.worker.onmessage({ data: render(43) });
-assert.equal(scene.elements['sky-id'].textContent, 'Nebula 002');
-assert.equal(scene.frames.size, 0, 'Regenerating a paused scene must not restart motion');
-scene.events.get('motion-toggle:click')();
+assert.equal(scene.elements['new-nebula'].disabled, false);
+assert.equal(scene.frames.size, 0, 'Regenerating with reduced motion must not restart animation');
+scene.motionPreference.matches = false;
+scene.events.get('media:change')();
 scene.document.hidden = true;
 scene.events.get('document:visibilitychange')();
 assert.equal(scene.frames.size, 0, 'Hidden tabs should not animate');
 scene.document.hidden = false;
 scene.events.get('document:visibilitychange')();
 assert.equal(scene.frames.size, 1);
-scene.events.get('media:change')({ matches: true });
+scene.motionPreference.matches = true;
+scene.events.get('media:change')();
 assert.equal(scene.frames.size, 0, 'A changed reduced-motion preference should stop motion');
 scene.window.innerWidth = 390;
 scene.window.innerHeight = 844;
@@ -102,4 +105,4 @@ const failure = runScene();
 failure.worker.onerror();
 assert.ok(failure.worker.terminated);
 assert.equal(failure.elements['sky-controls'].hidden, true);
-console.log('Passed: seeded rendering, new skies, pause/resume, reduced motion, background tabs, resize, and fallback behavior.');
+console.log('Passed: seeded rendering, new skies, reduced motion, background tabs, resize, and fallback behavior.');

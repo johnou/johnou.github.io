@@ -7,8 +7,6 @@
 
   const controls = document.getElementById('sky-controls');
   const regenerate = document.getElementById('new-nebula');
-  const toggle = document.getElementById('motion-toggle');
-  const skyId = document.getElementById('sky-id');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let worker;
   try {
@@ -23,10 +21,8 @@
   let lastFrame = 0;
   let time = 0;
   let fade = 1;
-  let paused = reducedMotion.matches;
   let width = 0;
   let height = 0;
-  let generation = 0;
   let stars = [];
   const pointer = { x: 0, y: 0 };
   const drift = { x: 0, y: 0 };
@@ -86,7 +82,7 @@
 
   function animate(now) {
     frame = 0;
-    if (paused || document.hidden || !texture) return;
+    if (reducedMotion.matches || document.hidden || !texture) return;
     const elapsed = Math.min((now - lastFrame) / 1000, .06);
     if (now - lastFrame >= 32) {
       time += elapsed;
@@ -103,9 +99,7 @@
   function syncMotion() {
     cancelAnimationFrame(frame);
     frame = 0;
-    toggle.setAttribute('aria-pressed', String(paused));
-    toggle.setAttribute('aria-label', paused ? 'Resume nebula animation' : 'Pause nebula animation');
-    if (paused) {
+    if (reducedMotion.matches) {
       fade = 1;
       previousTexture = null;
       draw();
@@ -129,7 +123,7 @@
     nextTexture.getContext('2d').putImageData(new ImageData(data.pixels, data.width, data.height), 0, 0);
     previousTexture = texture;
     texture = nextTexture;
-    fade = previousTexture && !paused ? 0 : 1;
+    fade = previousTexture && !reducedMotion.matches ? 0 : 1;
     stars = Array.from({ length: 460 }, () => ({
       x: Math.random(), y: Math.random(),
       radius: Math.random() < .045 ? 1.3 + Math.random() * .35 : .3 + Math.random() * .7,
@@ -139,8 +133,6 @@
       phase: Math.random() * Math.PI * 2,
       color: Math.random() > .8 ? '236,211,199' : '212,221,244',
     }));
-    generation += 1;
-    skyId.textContent = `Nebula ${String(generation).padStart(3, '0')}`;
     controls.hidden = false;
     regenerate.disabled = false;
     canvas.classList.add('ready');
@@ -155,12 +147,11 @@
     if (!texture) controls.hidden = true;
   };
   regenerate.addEventListener('click', generate);
-  toggle.addEventListener('click', () => { paused = !paused; syncMotion(); });
-  reducedMotion.addEventListener('change', (event) => { paused = event.matches; syncMotion(); });
+  reducedMotion.addEventListener('change', syncMotion);
   document.addEventListener('visibilitychange', syncMotion);
   window.addEventListener('resize', resize);
   window.addEventListener('pointermove', (event) => {
-    if (paused || event.pointerType === 'touch') return;
+    if (reducedMotion.matches || event.pointerType === 'touch') return;
     pointer.x = event.clientX / width - .5;
     pointer.y = event.clientY / height - .5;
   }, { passive: true });
