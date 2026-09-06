@@ -20,7 +20,7 @@ button:disabled { cursor: wait; opacity: .55; }
 button[hidden], [hidden] { display: none !important; }
 ::selection { background: #a98cd1; color: #080a13; }
 
-.universe { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: #080a13 url('images/bg.jpg') center / cover no-repeat; }
+.universe { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: #080a13; }
 .universe::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 65% 48%, transparent 15%, #080a1370 80%); }
 #nebula { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 1.5s ease; }
 #nebula.ready { opacity: 1; }
