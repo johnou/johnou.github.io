@@ -30,7 +30,8 @@ button[hidden], [hidden] { display: none !important; }
 .monogram { font-family: 'Manrope', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -3px; line-height: 1; }
 .monogram span { color: var(--accent); }
 .masthead-note { color: #cac8d5; display: flex; align-items: center; gap: 11px; font-size: 13px; }
-.tiny-star { color: var(--accent); font-size: 20px; }
+.tiny-star, .socials svg { display: block; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.tiny-star { color: var(--accent); width: 20px; height: 20px; }
 main { flex: 1; position: relative; display: flex; align-items: center; padding-block: 80px 86px; }
 .intro { position: relative; z-index: 1; }
 .eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 28px; text-transform: uppercase; letter-spacing: .21em; font-size: 12px; font-weight: 500; color: #d2ccdf; }
@@ -41,9 +42,9 @@ h1 > span { color: #d2c3ea; }
 .specialties { font-size: clamp(16px, 1.25vw, 19px); line-height: 1.75; letter-spacing: -.015em; color: #c3bfce; margin: 0 0 34px; }
 .socials { display: flex; align-items: center; gap: 31px; }
 .socials a { display: inline-flex; align-items: center; gap: 14px; font-size: 14px; min-height: 44px; border-bottom: 1px solid #d6c8eb33; transition: border-color .2s, color .2s; }
-.socials a span { color: #b6a9ce; transition: transform .2s; }
+.socials svg { width: 14px; height: 14px; color: #b6a9ce; transition: transform .2s; }
 .socials a:hover { color: #e3ccff; border-color: #d6c8eb; }
-.socials a:hover span { transform: translate(2px, -2px); }
+.socials a:hover svg { transform: translate(2px, -2px); }
 .sky-marker { position: absolute; left: 78%; top: 59%; display: flex; gap: 16px; align-items: flex-start; color: #d9d1e8a6; font-size: 12px; line-height: 1.7; letter-spacing: .025em; }
 .marker-cross { width: 17px; height: 17px; position: relative; flex-shrink: 0; margin-top: 4px; }
 .marker-cross::before, .marker-cross::after { content: ''; position: absolute; background: #f3eaff91; }
